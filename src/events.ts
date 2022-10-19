@@ -3,16 +3,18 @@ import { Event } from "./types/events.types";
 
 export const events: Event[] = [
     {
-        name: 'Toma Agüita',
-        actionTime: ['17:57', '18:00x'],
+        name: 'Toma Agüita💧',
+        description: 'El cuerpo lo necesita',
+        actionTime: ['19:00', '18:00'],
     },
     {
-        name: 'Come',
-        actionTime: '17:35',
+        name: 'No olvides comer🍔🍕',
+        description: 'No importa si no tienes hambre',
+        actionTime: '19:10',
         // enable: false,
     },
     {
-        name: 'Duerme',
+        name: 'Duerme un poco, mi pana💤',
         actionTime: '13:35',
         enable: true,
     }
@@ -46,7 +48,7 @@ export const getLasCorrespondingEvent = (events: Event[]) => {
             const isValid = RegExp(/^\d{2}\:\d{2}$/gmi).test(time)
 
             if (!isValid) {
-                logger({ message: `Invalid format for parameter "actionTime" in event "${e.name}". Must be in format "hh:mm" but obtained "${time}" instead`, type: 'warn' })
+                logger({ message: `Invalid format for parameter "actionTime" in event "${e.name}". Must be in format "hh:mm" but obtained "${time}" instead`, type: 'error' })                
                 return false
             }
 
@@ -56,7 +58,7 @@ export const getLasCorrespondingEvent = (events: Event[]) => {
             const minutes = Number(minutesStr || NaN)
 
             const eventTimeDate = new Date()
-            eventTimeDate.setHours(hours, minutes, 59)
+            eventTimeDate.setHours(hours, minutes, 0)
 
             // 1 hour
             const MAX_TIME_DIFF_MINUTES = 1 * 60

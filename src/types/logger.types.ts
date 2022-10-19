@@ -1,5 +1,5 @@
 export type LoggerOptions = {
-    type?: 'log' | 'info' | 'error' | 'warn' | 'debug'
+    type?: 'log' | 'info' | 'error' | 'debug'
     message: string
 }
 
