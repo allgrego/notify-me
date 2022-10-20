@@ -11,10 +11,9 @@ export const logger: LoggerFunction<LoggerOptions> = ({
     const now = new Date().toLocaleString()
 
     const logMessage = `[${type.toUpperCase()}]\t[${now}]\t${message}\r\n`
-    
+
     const fileName = join(__dirname, '..', '..', 'app.log')
     writeFileSync(fileName, logMessage, { flag: 'a', encoding: 'utf-8' })
-    console[type](logMessage)
 
-
+    if (type === 'error') console.error(message)
 }

@@ -1,9 +1,10 @@
 import { WindowsToaster } from 'node-notifier'
+import { logger } from './lib/logger'
 import { NotifyFunction, NotifyOptions } from './types/notifier.types'
 
 export const notify: NotifyFunction<NotifyOptions> = async ({
     title,
-    message=" ",
+    message = " ",
     wait = false,
     sound = true,
 }) => {
@@ -17,5 +18,7 @@ export const notify: NotifyFunction<NotifyOptions> = async ({
         wait,
         sound,
     })
+
+    logger({ type: 'info', message: `Event notified: "${title}:${message}"` })
 
 }

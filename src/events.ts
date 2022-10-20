@@ -1,29 +1,44 @@
+import readXlsxFile from 'read-excel-file/node'
+import fs from 'fs'
+import path from 'path'
 import { logger } from "./lib/logger";
 import { Event } from "./types/events.types";
 
-export const events: Event[] = [
-    {
-        name: 'Toma Agüita💧',
-        description: 'El cuerpo lo necesita',
-        actionTime: ['19:00', '18:00'],
-    },
-    {
-        name: 'No olvides comer🍔🍕',
-        description: 'No importa si no tienes hambre',
-        actionTime: '19:10',
-        // enable: false,
-    },
-    {
-        name: 'Duerme un poco, mi pana💤',
-        actionTime: '13:35',
-        enable: true,
-    }
-]
+export const getAllEvents = async (providedFilePath: string | undefined): Promise<Event[] | undefined> => {
 
-export const getAllEvents = async (): Promise<Event[] | undefined> => {
-    // TODO: Get events from spreadsheet file
-    const evs = events
-    return evs
+    if (!providedFilePath) throw new Error(`A xlsx file path for events is required as argument`)
+
+    const filePath = path.resolve(providedFilePath)
+
+    if (!fs.existsSync(filePath)) throw new Error(`Non existing XLSX file for events in "${filePath}"`)
+
+    let allRows = await readXlsxFile(filePath)
+
+    const dataRows = allRows.slice(1)
+
+    const events: Event[] = dataRows.map(row => {
+
+        const name: string | null = String(row[0]).trim()
+        const enable: boolean = !['false', 'falso', 'no', 'negativo'].includes(String(row[3]).trim().toLowerCase())
+
+        let description: string | undefined = String(row[1]).trim()
+        if (description === 'null') description = undefined
+
+        const actionTimesArr = String(row[2]).trim()
+
+        const actionTimes: string | string[] = actionTimesArr.split(',').map(t => t.trim())
+
+        const event: Event = {
+            name,
+            description,
+            actionTime: actionTimes.length === 1 ? actionTimes[0] : actionTimes,
+            enable
+        }
+
+        return event
+    })
+
+    return events
 }
 
 export const getLasCorrespondingEvent = (events: Event[]) => {
@@ -48,7 +63,7 @@ export const getLasCorrespondingEvent = (events: Event[]) => {
             const isValid = RegExp(/^\d{2}\:\d{2}$/gmi).test(time)
 
             if (!isValid) {
-                logger({ message: `Invalid format for parameter "actionTime" in event "${e.name}". Must be in format "hh:mm" but obtained "${time}" instead`, type: 'error' })                
+                logger({ message: `Invalid format for parameter "actionTime" in event "${e.name}". Must be in format "hh:mm" but obtained "${time}" instead`, type: 'error' })
                 return false
             }
 

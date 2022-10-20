@@ -4,11 +4,13 @@ import { notify } from './notifier'
 
 async function main() {
 
-    logger({ message: 'Starting execution', type: 'info' })
-
     try {
+        logger({ message: 'Starting execution', type: 'info' })
 
-        const allEvents = await getAllEvents() // Including disabled ones
+        const args = process.argv.slice(2)
+        const eventsXlsxFilePath = args[0] || undefined
+
+        const allEvents = await getAllEvents(eventsXlsxFilePath) // Including disabled ones
         logger({ message: `Total registered events : ${allEvents?.length || 0}`, type: 'debug' })
 
         // Filter only the valid ones
